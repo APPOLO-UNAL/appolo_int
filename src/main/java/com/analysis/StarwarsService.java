@@ -23,6 +23,9 @@ public class StarwarsService {
 }
 
 /*
+-------------Modificar para obtener canciones más reseñadas, o más populares--------------------
+-------------Y los usuarios más seguidos, o más activos-----------------------------------------
+
  * código para conectar con la API de GraphQL y enviar una solicitud de consulta GraphQL a un servidor GraphQL. (segun chatGPT)
  * import java.io*;
 import java.net.*;
