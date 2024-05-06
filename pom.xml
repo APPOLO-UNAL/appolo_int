@@ -15,8 +15,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -27,19 +27,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>jakarta.jws</groupId>
-      <artifactId>jakarta.jws-api</artifactId>
-      <version>3.0.0</version>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.20</version>
+      <scope>provided</scope>
     </dependency>
-    <!-- <dependency>
-        <groupId>com.sun.xml.ws</groupId>
-        <artifactId>jaxws-ri</artifactId>
-        <version>4.0.0</version>
-    </dependency> -->
-    <dependency>
+      <dependency>
       <groupId>com.sun.xml.ws</groupId>
-      <artifactId>jaxws-rt</artifactId>
+      <artifactId>jaxws-ri</artifactId>
       <version>4.0.0</version>
+      <type>pom</type>
     </dependency>
   </dependencies>
 
