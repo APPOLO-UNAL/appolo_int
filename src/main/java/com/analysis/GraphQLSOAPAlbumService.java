@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -43,6 +45,7 @@ public class GraphQLSOAPAlbumService {
         try {
             // Build the GraphQL request to get the list of users
             double totalFollowerCount = 0;
+            Map<String, Integer> idCounts = new HashMap<>();
             String commentsQuery = "query{  comments{    itemMusicId  }}";
             String graphqlRequest = "{\"query\": \"" + commentsQuery + "\"}";
 
@@ -50,20 +53,26 @@ public class GraphQLSOAPAlbumService {
             JSONArray commentsArray = getCommentsUIDs(graphqlRequest);
             for (int i = 0; i < commentsArray.length(); i++) {
                 JSONObject userObject = commentsArray.getJSONObject(i);
-                String Id = userObject.getString("Id");
-                //System.out.println("Processing user with UID: " + uid);
-                // Build and send the GraphQL request to get follower count for each UID
-                String tracksQuery = "query{    tracksByIdTrack(id:\\\""+Id+"\\\"){    name    artists{      name    }  }  }";
-                //System.out.println("GraphQL Query for UID " + uid + ": " + followersQuery);
-                String tracksGraphqlRequest = "{\"query\": \"" + tracksQuery + "\"}";
-                //TODO: get track name and artist name
-                int responseFoll = getTrackArtName(tracksGraphqlRequest);
-                //System.out.println("GraphQL response for  " + uid + ": " + responseFoll);
-                totalFollowerCount += responseFoll;
+                String Id = userObject.getString("itemMusicId");
+                idCounts.put(Id, idCounts.getOrDefault(Id, 0) + 1);
             }
+            String mostCommonId = null;
+            int maxCount = 0;
+
+            for (Map.Entry<String, Integer> entry : idCounts.entrySet()) {
+                if (mostCommonId == null || entry.getValue() > maxCount) {
+                    mostCommonId = entry.getKey();
+                    maxCount = entry.getValue();
+                }
+            }
+
             // Calculate the average follower count
-            double averageFollowers = (totalFollowerCount / commentsArray.length());
-            return "Average number of follows in app: " + averageFollowers;
+            String tracksQuery = "query{    tracksByIdTrack(id:\\\""+mostCommonId+"\\\"){    name    artists{      name    }  }  }";
+            //System.out.println("GraphQL Query for UID " + uid + ": " + followersQuery);
+            String tracksGraphqlRequest = "{\"query\": \"" + tracksQuery + "\"}";
+            //TODO: get track name and artist name
+            String[] arrName  = getTrackArtName(tracksGraphqlRequest);
+            return "Most reviewed track is " + arrName[0] + " by " + arrName[1] + " with " + maxCount + " reviews";
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,7 +102,6 @@ public class GraphQLSOAPAlbumService {
                 String tracksQuery = "query{    replies(parentId:\\\""+Id+"\\\"){    Id  }}";
                 //System.out.println("GraphQL Query for UID " + uid + ": " + followersQuery);
                 String tracksGraphqlRequest = "{\"query\": \"" + tracksQuery + "\"}";
-                //TODO: get track name and artist name
                 int responseRepl = getRepliesNum(tracksGraphqlRequest);
                 //System.out.println("GraphQL response for  " + uid + ": " + responseFoll);
                 if(responseRepl > maxReplyCount){
@@ -119,9 +127,15 @@ public class GraphQLSOAPAlbumService {
         return repliesArray.length();
     }
 
-    private int getTrackArtName(String followersGraphqlRequest) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTrackArtName'");
+    private String[] getTrackArtName(String followersGraphqlRequest) {
+        JSONObject responseObject = ProcessResponse(followersGraphqlRequest);
+        System.out.println(responseObject);
+        JSONObject dataObject = responseObject.getJSONObject("data");
+        JSONObject tracksObject = dataObject.getJSONObject("tracksByIdTrack");
+        String trackName = tracksObject.getString("name");
+        JSONArray artistsArray = tracksObject.getJSONArray("artists");
+        String artistName = artistsArray.getJSONObject(0).getString("name");
+        return new String[] { trackName, artistName };
     }
 
     private JSONArray getCommentsUIDs(String graphqlRequest) throws IOException{
@@ -177,7 +191,7 @@ public class GraphQLSOAPAlbumService {
 
     public static void main(String[] args) throws IOException {
         GraphQLSOAPAlbumService graphQLService = new GraphQLSOAPAlbumService();
-        String followersCountResponse = graphQLService.getMostRepliedComm();
+        String followersCountResponse = graphQLService.getItemMusicMostComm();
         System.out.println("Response from GraphQL server:");
         System.out.println(followersCountResponse);
     }
