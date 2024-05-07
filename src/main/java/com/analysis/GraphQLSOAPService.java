@@ -101,11 +101,11 @@ public class GraphQLSOAPService {
         String responseString = "";
         try {
             // Build the GraphQL request
-            String graphqlQuery = "query{  userComments(userId:\"d7e624ef472342d4b1f634a816ca0bb3\"){    content  }}";
+            String graphqlQuery = "query{  users{    uid  }}";
             String graphqlRequest = "{\"query\": \"" + graphqlQuery + "\"}";
 
             // Set up the connection to the GraphQL server
-            URL url = new URL("http://localhost:5000/graphql");
+            URL url = new URL("http://localhost:80/graphql");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");

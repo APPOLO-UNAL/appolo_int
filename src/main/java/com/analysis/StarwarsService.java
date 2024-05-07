@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 //POJO
+
+//TODO change methods to match with the GraphQL service
 @WebService(serviceName = "StarwarsWS")
 public class StarwarsService {
     @WebMethod(operationName = "StarwarsCharacter")
@@ -21,85 +23,3 @@ public class StarwarsService {
                 new StarwarsCharacter(1,"Padmé",new Date()));
     }
 }
-
-/*
--------------Modificar para obtener las reseñas de canciones-------------------
--------------Y los seguidores de un usuario-----------------------------------------
-
- * código para conectar con la API de GraphQL y enviar una solicitud de consulta GraphQL a un servidor GraphQL. (segun chatGPT)
- * import java.io*;
-import java.net.*;
-import javax.xml.soap.*;
-import javax.xml.transform.*;
-
-public class GraphQLSOAPService {
-
-    public String invokeGraphQLService() {
-        try {
-            // Construir la solicitud GraphQL
-            String graphqlQuery = "query {          comments {               Id               userId               picture               userName          }     }";
-            String graphqlRequest = "{\"query\": \"" + graphqlQuery + "\"}";
-
-            // Establecer la conexión con el servidor GraphQL
-            URL url = new URL("http://localhost:80/graphql");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
-
-            // Enviar la solicitud GraphQL
-            OutputStream outputStream = connection.getOutputStream();
-            outputStream.write(graphqlRequest.getBytes());
-            outputStream.flush();
-
-            // Leer la respuesta del servidor GraphQL
-            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder responseBuilder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                responseBuilder.append(line);
-            }
-            reader.close();
-
-            // Procesar la respuesta GraphQL
-            String graphqlResponse = responseBuilder.toString();
-
-            // Construir y enviar la respuesta SOAP
-            SOAPMessage soapResponse = buildSOAPResponse(graphqlResponse);
-            return serializeSOAPMessage(soapResponse);
-        } catch (IOException | SOAPException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private SOAPMessage buildSOAPResponse(String graphqlResponse) throws SOAPException {
-        SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
-        SOAPEnvelope envelope = soapMessage.getSOAPPart().getEnvelope();
-        SOAPBody body = envelope.getBody();
-
-        // Añadir el contenido GraphQL a la respuesta SOAP
-        SOAPElement responseElement = body.addChildElement(envelope.createName("graphqlResponse"));
-        responseElement.addTextNode(graphqlResponse);
-
-        return soapMessage;
-    }
-
-    private String serializeSOAPMessage(SOAPMessage soapMessage) throws SOAPException, IOException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        java.io.StringWriter sw = new java.io.StringWriter();
-        transformer.transform(new javax.xml.transform.stream.StreamSource(soapMessage.getSOAPPart().getContent()), new StreamResult(sw));
-        return sw.toString();
-    }
-
-    public static void main(String[] args) {
-        GraphQLSOAPService soapService = new GraphQLSOAPService();
-        String soapResponse = soapService.invokeGraphQLService();
-        System.out.println("SOAP Response:");
-        System.out.println(soapResponse);
-    }
-}
-
- * 
- */
