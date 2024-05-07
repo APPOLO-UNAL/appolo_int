@@ -23,8 +23,22 @@ public class userService {
         return response;
     }
     @WebMethod(operationName = "StatsFollowing")
-    public void getStatsFollowing(){
-        return;
+    public String getStatsFollowing(){
+        String response = graphQLSOAPService.getAverageFollowing();
+        System.out.println(response);
+        return response;
+    }
+    @WebMethod(operationName = "MostFollowed")
+    public String getMostFollowed(){
+        String response = graphQLSOAPService.getMostFollowed();
+        System.out.println(response);
+        return response;
+    }
+    @WebMethod(operationName = "FollowingMost")
+    public String getFollowingMost(){
+        String response = graphQLSOAPService.getFollowingMost();
+        System.out.println(response);
+        return response;
     }
 
 }
